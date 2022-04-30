@@ -22,8 +22,6 @@ emp_fe <- read_excel("./data/employment in nonagriculture female.xlsm", sheet="S
 hum_dev<-read_excel("./data/employment in nonagriculture female.xlsm", sheet="Human development")
 region<-read_excel("./data/employment in nonagriculture female.xlsm", sheet="Region")
 
-
-
 ```
 
 ```{r}
@@ -60,6 +58,16 @@ highchart(type = "map") %>%
 ```
 
 ```{r}
+hum_dev1<-hum_dev %>%
+  pivot_longer(-"Human Development", names_to = "Year", values_to = "value") %>%
+  pivot_wider(names_from = "Human Development" ,values_from =value ) %>%
+  gather(Type, data, -Year) %>%
+  mutate(Year = as.Date(paste(1,1,Year),format="%d %m %Y"))
 
+
+ggplot(hum_dev1, aes(Year, data, color = Type)) + 
+  geom_line() +
+  theme_grey() +
+  theme(legend.title = element_blank(), legend.position = "right")
 ```
 
