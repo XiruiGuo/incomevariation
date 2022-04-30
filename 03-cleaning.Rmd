@@ -157,7 +157,7 @@ colnames(data_20_age) <- c("Age","num","median_income")
 data_20_age$Year <- rep(2020,7)
 
 data_15_20_age <- rbind(data_15_age,data_16_age,data_17_age,data_18_age,data_19_age,data_20_age)
-write.csv(data_20_age,"./data_train/data_20_age.csv",row.names=FALSE,col.names=TRUE,sep=',')
+write.csv(data_15_20_age,"./data_train/data_15_20_age.csv",row.names=FALSE,col.names=TRUE,sep=',')
 ```
 
 

@@ -1,1 +1,65 @@
 # Results
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(tibble)
+```
+
+
+```{r}
+fm_ern_new <- read.csv("./data_train/fm_ern_new.csv")
+house_67_20_new <- read.csv("./data_train/house_67_20_new.csv")
+
+data_15_20_household <- read.csv("./data_train/data_15_20_household.csv")
+data_15_20_race <- read.csv("./data_train/data_15_20_race.csv")
+data_15_20_region <- read.csv("./data_train/data_15_20_region.csv")
+data_19_20_edu <- read.csv("./data_train/data_19_20_edu.csv")
+data_15_20_age <- read.csv("./data_train/data_15_20_age.csv")
+
+emp_fe <- read_excel("./data/employment in nonagriculture female.xlsm", sheet="Share of employment in nonagric")
+hum_dev<-read_excel("./data/employment in nonagriculture female.xlsm", sheet="Human development")
+region<-read_excel("./data/employment in nonagriculture female.xlsm", sheet="Region")
+
+
+
+```
+
+```{r}
+library(ggalluvial)
+
+library(viridis)
+library(kableExtra)
+library(countrycode)
+library(highcharter)
+library(tidyverse)
+library(magrittr)
+```
+
+
+```{r}
+emp_fe_2015 <- emp_fe[,c("Country","2015")]
+
+highchart(type = "map") %>%
+  hc_add_series_map(worldgeojson,
+                    emp_fe_2015 %>% 
+                      mutate(iso2 = countrycode(Country, origin="country.name", destination="iso2c")),
+                     value = "2015",joinBy = "iso2") %>%
+  hc_colorAxis(minColor = "#e8eded", maxColor = "#4c735e")
+```
+```{r}
+emp_fe_2019 <- emp_fe[,c("Country","2019")]
+
+highchart(type = "map") %>%
+  hc_add_series_map(worldgeojson,
+                    emp_fe_2019 %>% 
+                      mutate(iso2 = countrycode(Country, origin="country.name", destination="iso2c")),
+                     value = "2019",joinBy = "iso2") %>%
+  hc_colorAxis(minColor = "#e8eded", maxColor = "#4c735e")
+```
+
+```{r}
+
+```
+
