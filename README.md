@@ -6,6 +6,7 @@ The second question we can observe from our data is trends in the income distrib
 Another noteworthy point is explaining trend in gender wage gap?
 
 
+
 *This repo was initially generated from a bookdown template available here: https://github.com/jtr13/EDAVtemplate.*	
 
 
