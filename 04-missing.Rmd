@@ -1,1 +1,34 @@
 # Missing values
+
+graph 1
+```{r}
+library(readxl)
+library(mi)
+
+fm_ern_new <- read.csv("./data_train/fm_ern_new.csv")
+tidyfm <- fm_ern_new %>% 
+    gather(key, value, -Year) %>% 
+    mutate(missing = ifelse(value=="N", "yes", "no"))
+
+ggplot(tidyfm, aes(x = Year, y =key , fill = missing)) +
+  geom_tile(color = "white") + 
+  ggtitle("Missing value in fm_ern_new") +
+  scale_fill_viridis_d() + # discrete scale
+  theme_bw()
+```
+
+We can observe several missing data in the dataset "fm_ern_new", but the good point is the majority of the missing value is gather in the 1960-1966. We will deal with these missing values during 1960-1966 in the analysis because there're 5 columns contain completely data and we may use them.
+For the other two missing data in the "ft_workers_num_male" and "ft_workers_num_male", we fill them by using the mean about the above year and below year.
+
+```{r}
+miss_y<-tidyfm[(tidyfm$missing=="yes" & tidyfm$key=="ft_workers_num_male"),]$Year[1]
+
+above_y <- fm_ern_new[fm_ern_new$Year == (miss_y+1),c("ft_workers_num_male","ft_workers_num_female")]
+below_y <- fm_ern_new[fm_ern_new$Year == (miss_y-1),c("ft_workers_num_male","ft_workers_num_female")]
+
+tmp <- rbind(as.numeric(above_y),as.numeric(below_y))
+fm_ern_new[fm_ern_new$Year == miss_y, 
+           c("ft_workers_num_male","ft_workers_num_female")]=apply(tmp,2,mean)
+write.csv(fm_ern_new,"./data_train/fm_ern_final.csv",row.names=FALSE,col.names=TRUE,sep=',')
+```
+

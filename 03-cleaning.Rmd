@@ -11,6 +11,17 @@ fm_ern <- read_excel("./data/ Female_Male Earnings 1960 to 2020.xlsx")
 house_67_20 <- read_excel("./data/Households by Race 1967 to 2020.xlsx")
 ```
 
+## fm_ern to fm_ern_new
+
+step1: delete non-data rows
+step2: rename the colname
+step3: substring the length of Year to 4
+step4: We observe that "2013" and "2017" appear twice 
+       according to the annotate of the original data
+       We choose the first row data of "2013" and "2017" 
+step5: delete non-useful columns "MOE1","MOE2","MOE3","MOE4"
+step6: missing value will be dealed with in Missing value part
+
 ```{r}
 fm_ern <- fm_ern[7:69,]
 
@@ -24,11 +35,18 @@ colnames(fm_ern)<-c("Year",
 
 
 fm_ern$Year <- substr(fm_ern$Year,1,4)
+table(fm_ern$Year)
+fm_ern <- fm_ern[-c(5,10),]
+fm_ern <- fm_ern[,-c(5,9,13,17)]
 write.csv(fm_ern,"./data_train/fm_ern_new.csv",row.names=FALSE,col.names=TRUE,sep=',')
 ```
 
 
+## house_67_20 to house_67_20_new
 
+step1: delete non-correlative rows
+step2: rename the colname
+step3: delete un-useful row and add a categorical variable of race
 
 ```{r}
 house_67_20<-house_67_20[5:364,]
@@ -59,6 +77,7 @@ house_67_20$Year <- substr(house_67_20$Year,1,4)
 write.csv(house_67_20,"./data_train/house_67_20_new.csv",row.names=FALSE,col.names=TRUE,sep=',')
 ```
 
+#
 
 ```{r}
 data_15_household <- data_15_16[9:15,1:3]

@@ -5,11 +5,19 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(tibble)
+library(readxl)
+library(ggalluvial)
+library(viridis)
+library(kableExtra)
+library(countrycode)
+library(highcharter)
+library(tidyverse)
+library(magrittr)
 ```
 
 
 ```{r}
-fm_ern_new <- read.csv("./data_train/fm_ern_new.csv")
+fm_ern_final <- read.csv("./data_train/fm_ern_final.csv")
 house_67_20_new <- read.csv("./data_train/house_67_20_new.csv")
 
 data_15_20_household <- read.csv("./data_train/data_15_20_household.csv")
@@ -24,28 +32,30 @@ region<-read_excel("./data/employment in nonagriculture female.xlsm", sheet="Reg
 
 ```
 
-```{r}
-library(ggalluvial)
 
-library(viridis)
-library(kableExtra)
-library(countrycode)
-library(highcharter)
-library(tidyverse)
-library(magrittr)
-```
+## Question 1:
 
+male and female
+
+### graph1: female在 nonagriculture indutry的占比变化
+表：emp_fe
 
 ```{r}
-emp_fe_2015 <- emp_fe[,c("Country","2015")]
+# 注意1991年的图和2019年的图的图例不一致，但是可以看出在1991年女性在非农业就业人数占比重的国家 2019年的占比也大
+# 注意India, Pakistan, Afghanistan的区域 
+
+emp_fe_1991 <- emp_fe[,c("Country","1991")]
 
 highchart(type = "map") %>%
   hc_add_series_map(worldgeojson,
-                    emp_fe_2015 %>% 
+                    emp_fe_1991 %>% 
                       mutate(iso2 = countrycode(Country, origin="country.name", destination="iso2c")),
-                     value = "2015",joinBy = "iso2") %>%
+                     value = "1991",joinBy = "iso2") %>%
+  hc_title(text="Female Share of Employment in Nonagriculture 1991") %>%
   hc_colorAxis(minColor = "#e8eded", maxColor = "#4c735e")
 ```
+
+
 ```{r}
 emp_fe_2019 <- emp_fe[,c("Country","2019")]
 
@@ -54,20 +64,35 @@ highchart(type = "map") %>%
                     emp_fe_2019 %>% 
                       mutate(iso2 = countrycode(Country, origin="country.name", destination="iso2c")),
                      value = "2019",joinBy = "iso2") %>%
+  hc_title(text="Female Share of Employment in Nonagriculture 2019") %>%
   hc_colorAxis(minColor = "#e8eded", maxColor = "#4c735e")
 ```
 
+## graph2: 根据地区来看 女性在1991-2019年 在非农行业的占比 时间序列图
+表：region
+
 ```{r}
-hum_dev1<-hum_dev %>%
-  pivot_longer(-"Human Development", names_to = "Year", values_to = "value") %>%
-  pivot_wider(names_from = "Human Development" ,values_from =value ) %>%
+region1<-region %>%
+  pivot_longer(-"Regions", names_to = "Year", values_to = "value") %>%
+  pivot_wider(names_from = "Regions" ,values_from =value ) %>%
   gather(Type, data, -Year) %>%
   mutate(Year = as.Date(paste(1,1,Year),format="%d %m %Y"))
 
 
-ggplot(hum_dev1, aes(Year, data, color = Type)) + 
+ggplot(region1, aes(Year, data, color = Type)) + 
   geom_line() +
   theme_grey() +
   theme(legend.title = element_blank(), legend.position = "right")
+```
+
+## graph3:
+表：fm_ern_final
+```{r}
+median_fm <- fm_ern_final[,c("total_median_earn_male","total_median_earn_female",
+                             "ft_median_earn_male","ft_median_earn_male")]
+
+num_fm <-
+
+fm_ern_new[1:55,]
 ```
 
