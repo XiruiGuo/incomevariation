@@ -1,7 +1,5 @@
 # Data sources
 
-*Data*: \
-
 We collect data sets from United States Census Bureau and United Nations Development Program. Totally, we have 6 data sets:
 
 1. `Table A-1`, `Table A-2` and `Table A-7` from https://www.census.gov/library/publications/2021/demo/p60-273.html \
