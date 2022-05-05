@@ -3,25 +3,15 @@
 
 ```{r}
 library(readxl)
-data_15_16 <-read_excel("./data/ Income and Earnings Summary Measures2015 and 2016.xls")
+data_15_16 <-read_excel("./data/Income and Earnings Summary Measures2015 and 2016.xls")
 data_17_18 <- read_excel("./data/Income Summary Measures 2017 and 2018.xlsx")
 data_19_20 <- read_excel("./data/Income Summary Measures 2019 and 2020.xlsx")
 
-fm_ern <- read_excel("./data/ Female_Male Earnings 1960 to 2020.xlsx")
+fm_ern <- read_excel("./data/Female_Male Earnings 1960 to 2020.xlsx")
 house_67_20 <- read_excel("./data/Households by Race 1967 to 2020.xlsx")
 ```
 
-## fm_ern to fm_ern_new
-
-step1: delete non-data rows
-step2: rename the colname
-step3: substring the length of Year to 4
-step4: We observe that "2013" and "2017" appear twice 
-       according to the annotate of the original data
-       We choose the first row data of "2013" and "2017" 
-step5: delete non-useful columns "MOE1","MOE2","MOE3","MOE4"
-step6: missing value will be dealed with in Missing value part
-
+## The Transformation Process for fm_ern 
 ```{r}
 fm_ern <- fm_ern[7:69,]
 
@@ -35,19 +25,14 @@ colnames(fm_ern)<-c("Year",
 
 
 fm_ern$Year <- substr(fm_ern$Year,1,4)
-table(fm_ern$Year)
 fm_ern <- fm_ern[-c(5,10),]
 fm_ern <- fm_ern[,-c(5,9,13,17)]
 write.csv(fm_ern,"./data_train/fm_ern_new.csv",row.names=FALSE,col.names=TRUE,sep=',')
 ```
 
+In fm_ern, since the raw data was collected in excel format, which contains text description in the first and last few rows, these unhelpful rows are deleted first. When reading the excel into R, the column names are default defined as some values, renaming column names is the next step to create data easier for understanding. In the "Year" column of the original data, some cells have corner scales, and after looking into the data we can conclude this is not significant because only two years appear twice, so the first row occurred from each duplicated "Year" is selected. Last, since the margin of error is not taken into consideration in this analysis, getting rid of columns associated with the margin of error is the last step.
 
-## house_67_20 to house_67_20_new
-
-step1: delete non-correlative rows
-step2: rename the colname
-step3: delete un-useful row and add a categorical variable of race
-
+## The Transformation Process for house_67_20 
 ```{r}
 house_67_20<-house_67_20[5:364,]
 # left inclued, right open
@@ -75,10 +60,13 @@ house_67_20$race_cate <-c(race_col,"HISPANIC (ANY RACE) 28")
 house_67_20 <- house_67_20[-vec[1:length(vec)-1],]
 house_67_20$Year <- substr(house_67_20$Year,1,4)
 write.csv(house_67_20,"./data_train/house_67_20_new.csv",row.names=FALSE,col.names=TRUE,sep=',')
+
 ```
 
-#
+In house_67_20, we first delete the uncorrelated descriptive text rows as fm_ern, then rename the column name. In the original excel data set, the race is categorized by row, so we deleted the row indicated race and add a new race column at the end to make the data set suitable for graphics in ggplot2.
 
+
+## The Transformation Process for data_15_16, data_17_18 and data_19_20
 ```{r}
 data_15_household <- data_15_16[9:15,1:3]
 colnames(data_15_household) <- c("Type of Households","num","median_income")
@@ -201,7 +189,6 @@ colnames(data_18_region) <- c("Region","num","median_income")
 data_18_region$Year <- rep(2018,4)
 
 
-
 data_19_region <- data_19_20[36:39,1:3]
 colnames(data_19_region) <- c("Region","num","median_income")
 data_19_region$Year <- rep(2019,4)
@@ -213,7 +200,6 @@ data_20_region$Year <- rep(2020,4)
 data_15_20_region <- rbind(data_15_region,data_16_region,data_17_region,data_18_region,data_19_region,data_20_region)
 write.csv(data_15_20_region,"./data_train/data_15_20_region.csv",row.names=FALSE,col.names=TRUE,sep=',')
 ```
-
 
 ```{r}
 #education
@@ -227,9 +213,13 @@ data_20_edu$Year <- rep(2020,5)
 
 data_19_20_edu <- rbind(data_19_edu,data_20_edu)
 write.csv(data_19_20_edu,"./data_train/data_19_20_edu.csv",row.names=FALSE,col.names=TRUE,sep=',')
+
 ```
 
+In the data_15_16, this data demonstrate income by different factors like household, education, race, etc. All factors show in one row, so we separate the data by each category to analyze how each factor contributes to median_income. In the categorized data set, renaming the columns and adding a new column for the sub-categories. Since data_17_18 and data_19_20 have the same data structure as data_15_16. The transformation process for data_17_18 and data_19_20 applies the same strategy. 
 
+## The transformation process for Shape of Employment in Nonagricultural for Female
 
+This data was originally collected with neatness. It is easy to figure out that the data shows the employment proportion of females in the nonagricultural industry in three different categories: countries, type of human development and region. First, according to the category, the report splits the original data into three sheets and gives the names emp_fe, hum_dev and region for them. Then, these sheets need simply to delete some un-used rows in excel since it does not require many transformations.
 
-
+ 

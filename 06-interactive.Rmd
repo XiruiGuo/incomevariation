@@ -1,3 +1,107 @@
 # Interactive component
 
+In this part, the report represents the interactive plot for the proportion of females in the nonagricultural industry from 1991 to 2019 with break 5. People can observe countries, such as China, the United States, Russia, etc., that has a higher proportion of female in the nonagricultural industry still maintain the higher proportion. This proportion grows fast in some African countries such as South Africa, Angola, Botswana, etc. In 2019, these countries have a similar proportion to those countries that show high value in 1991. Some Asian countries that are close to Africa, such as India, Iran, Pakistan, etc., continuously have a lower proportion of females in the nonagricultural industry.
+
+```{r}
+library(GGally) 
+library(ggpubr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(tibble)
+library(readxl)
+library(ggalluvial)
+library(viridis)
+library(kableExtra)
+library(countrycode)
+library(highcharter)
+library(tidyverse)
+library(magrittr)
+library(RColorBrewer)
+emp_fe <- read_excel("./data/employment in nonagriculture female.xlsm", sheet="Share of employment in nonagric")
+```
+
+
+```{r}
+emp_fe_1991 <- emp_fe[,c("Country","1991")]
+highchart(type = "map") %>%
+  hc_add_series_map(worldgeojson,
+                    emp_fe_1991 %>% 
+                      mutate(iso2 = countrycode(Country, origin="country.name", destination="iso2c")),
+                     value = "1991",joinBy = "iso2") %>%
+  hc_title(text="Female Share of Employment in Nonagriculture 1991") %>%
+  hc_colorAxis(minColor = "#e8eded", maxColor = "#4c735e")
+```
+
+
+```{r}
+emp_fe_1995 <- emp_fe[,c("Country","1995")]
+highchart(type = "map") %>%
+  hc_add_series_map(worldgeojson,
+                    emp_fe_1995 %>% 
+                      mutate(iso2 = countrycode(Country, origin="country.name", destination="iso2c")),
+                     value = "1995",joinBy = "iso2") %>%
+  hc_title(text="Female Share of Employment in Nonagriculture 1995") %>%
+  hc_colorAxis(minColor = "#e8eded", maxColor = "#4c735e")
+```
+
+
+```{r}
+emp_fe_2000 <- emp_fe[,c("Country","2000")]
+highchart(type = "map") %>%
+  hc_add_series_map(worldgeojson,
+                    emp_fe_2000 %>% 
+                      mutate(iso2 = countrycode(Country, origin="country.name", destination="iso2c")),
+                     value = "2000",joinBy = "iso2") %>%
+  hc_title(text="Female Share of Employment in Nonagriculture 2000") %>%
+  hc_colorAxis(minColor = "#e8eded", maxColor = "#4c735e")
+```
+
+
+```{r}
+emp_fe_2005 <- emp_fe[,c("Country","2005")]
+highchart(type = "map") %>%
+  hc_add_series_map(worldgeojson,
+                    emp_fe_2005 %>% 
+                      mutate(iso2 = countrycode(Country, origin="country.name", destination="iso2c")),
+                     value = "2005",joinBy = "iso2") %>%
+  hc_title(text="Female Share of Employment in Nonagriculture 2005") %>%
+  hc_colorAxis(minColor = "#e8eded", maxColor = "#4c735e")
+```
+
+
+```{r}
+emp_fe_2010 <- emp_fe[,c("Country","2010")]
+highchart(type = "map") %>%
+  hc_add_series_map(worldgeojson,
+                    emp_fe_2010 %>% 
+                      mutate(iso2 = countrycode(Country, origin="country.name", destination="iso2c")),
+                     value = "2010",joinBy = "iso2") %>%
+  hc_title(text="Female Share of Employment in Nonagriculture 2010") %>%
+  hc_colorAxis(minColor = "#e8eded", maxColor = "#4c735e")
+```
+
+```{r}
+emp_fe_2015 <- emp_fe[,c("Country","2015")]
+highchart(type = "map") %>%
+  hc_add_series_map(worldgeojson,
+                    emp_fe_2015 %>% 
+                      mutate(iso2 = countrycode(Country, origin="country.name", destination="iso2c")),
+                     value = "2015",joinBy = "iso2") %>%
+  hc_title(text="Female Share of Employment in Nonagriculture 2015") %>%
+  hc_colorAxis(minColor = "#e8eded", maxColor = "#4c735e")
+```
+
+```{r}
+emp_fe_2019 <- emp_fe[,c("Country","2019")]
+
+highchart(type = "map") %>%
+  hc_add_series_map(worldgeojson,
+                    emp_fe_2019 %>% 
+                      mutate(iso2 = countrycode(Country, origin="country.name", destination="iso2c")),
+                     value = "2019",joinBy = "iso2") %>%
+  hc_title(text="Female Share of Employment in Nonagriculture 2019") %>%
+  hc_colorAxis(minColor = "#e8eded", maxColor = "#4c735e")
+```
+
 

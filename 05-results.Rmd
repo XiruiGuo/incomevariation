@@ -1,6 +1,8 @@
 # Results
 
 ```{r}
+library(GGally) 
+library(ggpubr)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -13,6 +15,7 @@ library(countrycode)
 library(highcharter)
 library(tidyverse)
 library(magrittr)
+library(RColorBrewer)
 ```
 
 
@@ -33,17 +36,10 @@ region<-read_excel("./data/employment in nonagriculture female.xlsm", sheet="Reg
 ```
 
 
-## Question 1:
 
-male and female
-
-### graph1: female在 nonagriculture indutry的占比变化
-表：emp_fe
+## Gender Influence in Income
 
 ```{r}
-# 注意1991年的图和2019年的图的图例不一致，但是可以看出在1991年女性在非农业就业人数占比重的国家 2019年的占比也大
-# 注意India, Pakistan, Afghanistan的区域 
-
 emp_fe_1991 <- emp_fe[,c("Country","1991")]
 
 highchart(type = "map") %>%
@@ -68,16 +64,16 @@ highchart(type = "map") %>%
   hc_colorAxis(minColor = "#e8eded", maxColor = "#4c735e")
 ```
 
-## graph2: 根据地区来看 女性在1991-2019年 在非农行业的占比 时间序列图
-表：region
+To study the trend of women's employment situation, the complex data can be depicted easily by using the geographical chart to compare the female share of employment in nonagricultural of the early time period and now. The interaction part allows users to observe data by their needs. The scales of graphs for 1991 and 2019 are different, but people can still observe that women actively participate in nonagricultural employment in North America, East Asia, Europe and Oceania. For example, no obvious difference between 1991 and 2019 in countries like Canada and Russia. An increasing female share trend of employment appears most significantly in South Asia, then in South Africa and South America. For example, the share in Iran grows to 17.3 from 9.8, with great growth also in countries like Pakistan, Afghanistan, etc. People can also see the gentle growth in countries like Argentina and South Africa. One interesting point in this graph is the number in India decreases to 15.9 from 16.4. There probably have three key factors that limit the role of women in the Indian economy - entrenched gender discrimination; increased earnings for men; and lack of high-quality employment opportunities for women. Even the worldwide increased female employment cannot solve this dilemma. Another guess is those highly-educated women going abroad to seek better job opportunities.
 
-```{r}
+
+
+```{r,fig.width=11}
 region1<-region %>%
   pivot_longer(-"Regions", names_to = "Year", values_to = "value") %>%
   pivot_wider(names_from = "Regions" ,values_from =value ) %>%
   gather(Type, data, -Year) %>%
   mutate(Year = as.Date(paste(1,1,Year),format="%d %m %Y"))
-
 
 ggplot(region1, aes(Year, data, color = Type)) + 
   geom_line() +
@@ -85,14 +81,275 @@ ggplot(region1, aes(Year, data, color = Type)) +
   theme(legend.title = element_blank(), legend.position = "right")
 ```
 
-## graph3:
-表：fm_ern_final
+To represent the time-series data, the report uses the line plot to see the changes from 1991 to 2019. All the curves in this graph are relatively smooth with a low slope, so it is clear that the women's share of non-agricultural employment only gains very subtle growth worldwide. Also, the statistics of the world and small island developing states are far lower than other regions in the world. As a result, there is still a long way to achieve the goal of gender equality in the workplace.
+
+
 ```{r}
-median_fm <- fm_ern_final[,c("total_median_earn_male","total_median_earn_female",
-                             "ft_median_earn_male","ft_median_earn_male")]
+median_fm <- fm_ern_final[,c("Year","total_median_earn_male","total_median_earn_female",
+                             "ft_median_earn_male","ft_median_earn_female")]
+median_fm$diff_total_earn = median_fm$total_median_earn_male -median_fm$total_median_earn_female
+median_fm$diff_ft_earn = median_fm$ft_median_earn_male-median_fm$ft_median_earn_female
 
-num_fm <-
+# have missing value and start at fm_ern_final[1:54,]
+num_fm <- fm_ern_final[1:54,c("Year","total_workers_num_male_we","total_workers_num_female_we",
+                              "ft_workers_num_male_we","ft_workers_num_female_we")]
+for (i in 2:ncol(num_fm)){
+  num_fm[,i]=as.integer(num_fm[,i])
+}
+num_fm$diff_total_num = num_fm$total_workers_num_male_we - num_fm$total_workers_num_female_we
+num_fm$diff_ft_num = num_fm$ft_workers_num_male_we-num_fm$ft_workers_num_female_we
 
-fm_ern_new[1:55,]
 ```
 
+
+```{r}
+median_fm1<-median_fm %>%
+  select(Year,total_median_earn_male,total_median_earn_female,
+         ft_median_earn_male,ft_median_earn_female) %>%
+  gather(Type, data, -Year) %>%
+  mutate(Year = as.Date(paste(1,1,Year),format="%d %m %Y"))
+
+g1 <- ggplot(median_fm1, aes(Year, data, color = Type)) + 
+  scale_color_viridis(discrete = TRUE) +
+  geom_line() +
+  theme_grey() +
+  scale_y_continuous(limits = c(10000, 65000))+
+  theme(legend.title = element_blank(), legend.position = "top")
+
+median_fm2<-median_fm %>%
+  select(Year,diff_total_earn, diff_ft_earn) %>%
+  gather(Type, data, -Year) %>%
+  mutate(Year = as.Date(paste(1,1,Year),format="%d %m %Y"))
+
+g2 <- ggplot(median_fm2, aes(Year, data, color = Type)) + 
+  geom_line() +
+  theme_grey() +
+  scale_y_continuous(limits = c(10000, 65000))+
+  theme(legend.title = element_blank(), legend.position = "top")
+
+ggarrange(g1,g2,nrow=2,ncol=1)
+```
+
+These two graphs are used to study the difference between female and male median earnings by full-time and total workers. Comparing the disparity of genders, both female median earnings by full time and total median earnings are lower than male ones. From another perspective, comparing full-time and total workers, it is easy to see that full-time workers earn more than total workers. One reason for this difference is the total workers may contain some unpaid situation. 
+
+The second graph helps us work on the question of the difference in median earnings by gender. No significant difference between full-time workers and total workers here, and it is glad to see that the gap in earning difference for gender is narrower as time goes by.
+
+
+```{r}
+num_fm1<-num_fm %>%
+  select(Year,total_workers_num_male_we,total_workers_num_female_we,
+         ft_workers_num_male_we,ft_workers_num_female_we) %>%
+  gather(Type, data, -Year) %>%
+  mutate(Year = as.Date(paste(1,1,Year),format="%d %m %Y"))
+
+g3 <- ggplot(num_fm1, aes(Year, data, color = Type)) + 
+  scale_color_viridis(discrete = TRUE) +
+  geom_line() +
+  theme_grey() +
+  scale_y_continuous(limits = c(5000, 100000))+
+  theme(legend.title = element_blank(), legend.position = "top")
+
+num_fm2<-num_fm %>%
+  select(Year,diff_total_num, diff_ft_num) %>%
+  gather(Type, data, -Year) %>%
+  mutate(Year = as.Date(paste(1,1,Year),format="%d %m %Y"))
+
+g4 <- ggplot(num_fm2, aes(Year, data, color = Type)) + 
+  geom_line() +
+  theme_grey() +
+  scale_y_continuous(limits = c(5000, 100000))+
+  theme(legend.title = element_blank(), legend.position = "top")
+
+ggarrange(g3,g4,nrow=2,ncol=1)
+
+```
+
+The last point of study on the gender earnings inequality is based on the number of workers. In the upper graph, both curves for the total number of workers are high than the full-time ones. It is easily perceived since the full-time workers have to be a subset of the total number of workers. In the lower graph, we can see both curves show a decreasing trend in the difference of numbers of workers in the workplace, which follows the result of the times series graph on a narrower wage gap between females and males, which is a good sign as well.
+
+## Race influence in Income
+
+```{r,fig.height=8,fig.width=10}
+a <- house_67_20_new %>% 
+  filter(.,Year == 2020) %>%
+  select(c(4:12,17))
+
+b <- as.data.frame(t(a))
+
+colnames(b)<-b[10,]
+b <- b[-10,]
+b$income_perc <- c("under 15", "15-25","25-35","35-50","50-75","75-100","100-150","150-200","above 200")
+b$income_perc=as.factor(b$income_perc)
+
+# 8
+race_col <- b[,1]
+bar1<- ggplot(b,aes(fct_relevel(income_perc,"under 15",
+                         "15-25","25-35","35-50","50-75","75-100",
+                         "100-150","150-200","above 200"),race_col))+
+  geom_bar(stat="identity", fill = "steelblue", alpha = 0.5) + 
+  xlab("income_range")+
+  ylab("ALL RACES")+
+  coord_flip()+
+  geom_text(aes(label = paste0(race_col, "%")), 
+            color = "gray20", hjust =-0.2,size=3.2)+
+  ggtitle("Plot of income range by ALL RACES")
+  
+
+race_col2 <- b[,2]
+bar2<-  ggplot(b,aes(fct_relevel(income_perc,"under 15",
+                         "15-25","25-35","35-50","50-75","75-100",
+                         "100-150","150-200","above 200"),race_col2))+
+  geom_bar(stat="identity", fill = "thistle", alpha = 0.5) + 
+  xlab("income_range")+
+  ylab("WHITE ALONE 24")+
+  coord_flip()+
+  geom_text(aes(label = paste0(race_col2, "%")), 
+            color = "gray20", hjust =-0.2,size=3.2)+
+  ggtitle("Plot of income range by WHITE ALONE 24")
+  
+race_col3 <- b[,3]
+bar3<-ggplot(b,aes(fct_relevel(income_perc,"under 15",
+                         "15-25","25-35","35-50","50-75","75-100",
+                         "100-150","150-200","above 200"),race_col3))+
+  geom_bar(stat="identity", fill = "tomato", alpha = 0.5) + 
+  xlab("income_range")+
+  ylab("WHITE ALONE, NOT HISPANIC 24")+
+  coord_flip()+
+  geom_text(aes(label = paste0(race_col3, "%")),
+            color = "gray20", hjust =-0.2,size=3.2)+
+  ggtitle("Plot of income range by WHITE ALONE, NOT HISPANIC 24")
+  
+race_col4 <- b[,4]
+bar4<-  ggplot(b,aes(fct_relevel(income_perc,"under 15",
+                         "15-25","25-35","35-50","50-75","75-100",
+                         "100-150","150-200","above 200"),race_col4))+
+  geom_bar(stat="identity", fill = "turquoise", alpha = 0.5) + 
+  xlab("income_range")+
+  ylab("BLACK ALONE OR IN COMBINATION")+
+  coord_flip()+
+    geom_text(aes(label = paste0(race_col4, "%")), 
+              color = "gray20", hjust =-0.2,size=3.2)+
+  ggtitle("Plot of income range by BLACK ALONE OR IN COMBINATION")
+  
+
+race_col5 <- b[,5]
+bar5<-  ggplot(b,aes(fct_relevel(income_perc,"under 15",
+                         "15-25","25-35","35-50","50-75","75-100",
+                         "100-150","150-200","above 200"),race_col5))+
+  geom_bar(stat="identity", fill = "violet", alpha = 0.5) + 
+  xlab("income_range")+
+  ylab("BLACK ALONE 26")+
+  coord_flip()+
+  geom_text(aes(label = paste0(race_col5, "%")), 
+            color = "gray20", hjust =-0.2,size=3.2)+
+  ggtitle("Plot of income range by BLACK ALONE 26")
+  
+race_col6 <- b[,6]
+bar6<-  ggplot(b,aes(fct_relevel(income_perc,"under 15",
+                         "15-25","25-35","35-50","50-75","75-100",
+                         "100-150","150-200","above 200"),race_col6))+
+  geom_bar(stat="identity", fill = "wheat", alpha = 0.5) + 
+  xlab("income_range")+
+  ylab("ASIAN ALONE OR IN COMBINATION")+
+  coord_flip()+
+  geom_text(aes(label = paste0(race_col6, "%")), 
+            color = "gray20", hjust =-0.2,size=3.2)+
+  ggtitle("Plot of income range by ASIAN ALONE OR IN COMBINATION")
+  
+race_col7 <- b[,7]
+bar7<- ggplot(b,aes(fct_relevel(income_perc,"under 15",
+                         "15-25","25-35","35-50","50-75","75-100",
+                         "100-150","150-200","above 200"),race_col7))+
+  geom_bar(stat="identity", fill = "yellow", alpha = 0.5) + 
+  xlab("income_range")+
+  ylab("ASIAN ALONE 27")+
+  coord_flip()+
+  geom_text(aes(label = paste0(race_col7, "%")), 
+            color = "gray20", hjust =-0.2,size=3.2)+
+  ggtitle("Plot of income range by ASIAN ALONE 27")
+  
+race_col8 <- b[,8]
+bar8<-  ggplot(b,aes(fct_relevel(income_perc,"under 15",
+                         "15-25","25-35","35-50","50-75","75-100",
+                         "100-150","150-200","above 200"),race_col8))+
+  geom_bar(stat="identity", fill = "pink", alpha = 0.5) + 
+  xlab("income_range")+
+  ylab("HISPANIC (ANY RACE) 28")+
+  coord_flip()+
+    geom_text(aes(label = paste0(race_col8, "%")), 
+              color = "gray20", hjust =-0.2,size=3.2)+
+  ggtitle("Plot of income range by HISPANIC (ANY RACE) 28")
+
+ggarrange(bar1,bar2,bar3,bar4,bar5,bar6,bar7,bar8,nrow=4,ncol=2) 
+```
+
+Here the report chooses to use bar plots to see how races affect income by finding the location of the peak in the distribution. The patterns of WHITE ALONE and WHITE ALONE_NOT HISPANIC are quite similar, located in the upper-middle-income range, which is at its peak around "50-75" and "100-150". Also, there is not much difference in ASIAN ALONE OR IN COMBINATION and ASIAN ALONE as well, the income ranges gather in the top-level "above 200". The same pattern appears in BLACK ALONE and BLACK ALONE OR IN COMBINATION, which is highest in "Under 15". The income range varied by race is easily detectable by the observation by faceting bar plots.
+
+
+```{r}
+race1 <- data_15_20_race[,c(1,3,4)]
+race1 <- race1 %>%
+  mutate(Year = as.Date(paste(1,1,Year),format="%d %m %Y"))
+
+ggplot(race1, aes(Year, median_income, color = Race)) + 
+  scale_color_viridis(discrete = TRUE) +
+  geom_line() +
+  theme_grey() +
+  scale_y_continuous(labels = scales::dollar_format())+
+  theme(legend.title = element_blank(), legend.position = "top")
+```
+
+From the horizontal comparison of time, all race shows an increasing trend in the median income. Especially, there is a steep slope between the year 2018 and 2019. However, From the year 2019 to 2020, the median income of all races decrease. The outbreak of COVID-19 may explain this phenomenon. A lot of companies face the breakout problem and usually, they cut down the number of persons employed to relieve the financial stress.
+
+
+## Other Influence in Income
+
+```{r,fig.width=10}
+household1 <- data_15_20_household[,c(1,3,4)]
+household1 <- household1 %>%
+  mutate(Year = as.Date(paste(1,1,Year),format="%d %m %Y"))
+
+ggplot(household1, aes(Year, median_income, color = Type.of.Households)) + 
+  scale_color_viridis(discrete = TRUE) +
+  geom_line() +
+  theme_grey() +  
+  scale_y_continuous(labels = scales::dollar_format())+
+  theme(legend.title = element_blank(), legend.position = "right")
+
+```
+
+After considering some key factors' influence on income, the report is still interested in how other possible factors could affect median income. As the time-series graph showing, people can see an overall increasing trend in income by different households, but they're all exists a simultaneous decrease from 2019 to 2020. The reason for this is the COVID-19 virus can affect everyone's earnings no matter the household type. We can see from the graph that the higher one's earnings are, the greater the influence of the COVID-19. The household type of "Married-couple" earns the most and was affected the most.
+
+
+```{r}
+data_19_20_edu<-data_19_20_edu %>%
+  mutate(Education = as.factor(Education)) %>%
+  mutate(Year = as.factor(Year))
+
+ggplot(data_19_20_edu, aes(x=Education, y=median_income, fill=Year))+ 
+  geom_bar(position="dodge", stat="identity")+
+  scale_fill_manual(values=c("#6fa8dc", "#674ea7"))+
+  coord_flip()+
+  scale_y_continuous(labels = scales::dollar_format())+
+  labs(title="Income by Education 2019-2020",y=" Median Income", x="")+
+  theme(legend.title = element_blank(), legend.position = "top")
+```
+
+Education is another factor worth taking consideration into. This bar plot compares not only the influence of education on median income but also an increase in income from 2019 to 2020 for all educational levels. People can conclude from the graph that earnings accumulate greatly as the educational level increases.  
+
+```{r}
+library(RColorBrewer)
+data_15_20_age <- data_15_20_age%>%
+  mutate(Age=as.factor(Age)) %>%
+  mutate(Year = as.factor(Year))
+
+ggplot(data_15_20_age, aes(x=Age, y=median_income, fill=Year)) + 
+  geom_bar(position="dodge", stat="identity")+
+  scale_fill_brewer(palette = "YlOrBr")+
+  coord_flip()+
+  scale_y_continuous(labels = scales::dollar_format())+
+  labs(title="Income by Age 2015-2020",y=" Median Income", x="")+
+  theme(legend.title = element_blank(), legend.position = "top")
+
+```
+
+The last factor the report assume has a great impact on earnings is age. The report uses bar charts to compare from both among and within each age group. A normal distribution can be observed from the median income as age grows. Within each group, the median income rises with time, and a hit of the COVID-19 can be discovered here as well because there is a sudden decline from 2019 to 2020.

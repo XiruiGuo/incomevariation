@@ -1,18 +1,17 @@
 # Data sources
 
 *Data*: \
-`Table A-1`, `Table A-2` and `Table A-7` from https://www.census.gov/library/publications/2021/demo/p60-273.html \
-`Table A-1` from https://www.census.gov/data/tables/2019/demo/income-poverty/p60-266.html \
-`Table A-1` from https://www.census.gov/library/publications/2018/demo/p60-263.html \
 
-
-The data is from the United States Census Bureau.
-In this project, we are interested in changes in income from multiple dimension.
-The first point we focus on is disparities in income by Race and Ethnicity, and how does location affect income?\
-The second question we can observe from our data is trends in the income distribution by race/ethnicity over a period of time.\
-Another noteworthy point is explaining trend in gender wage gap.\
+We collect data sets from United States Census Bureau and United Nations Development Program. Totally, we have 6 data sets: \ 
+1. `Table A-1`, `Table A-2` and `Table A-7` from https://www.census.gov/library/publications/2021/demo/p60-273.html \
+2. `Table A-1` from https://www.census.gov/data/tables/2019/demo/income-poverty/p60-266.html \
+3. `Table A-1` from https://www.census.gov/library/publications/2018/demo/p60-263.html \
+4. `Share of Employment in Nonagriculture for Female (% of total employment in nonagriculture)` from UNDP human development report https://hdr.undp.org/en/indicators/175106 
 
 
 The three `Tables A-1` show the same information in the column such as Race and Ethnicity, location, education, etc. The only difference among them is time. So we will put them together and analyze the data from time series and cross-section directions.\
-`Table A-2` and `Table A-7` are time-series data from 1960 to 2020. `Table A-2` separates the household income into 9 groups and show the number of household by different race group. `Table A-7` compares the income for females and males.\
-All these three tables are informational and can support our three questions. 
+`Table A-2` and `Table A-7` are time-series data from 1960 to 2020. `Table A-2` separates the household income into 9 groups and show the number of household by different race group. `Table A-7` compares the income of females and males.\
+`Shape of Employment in Nonagricultural for Female` represents the data during 1991-2019 and it contains the employment proportion of female in nonagricultural industry in 180 countries, in five different type of human developments and in 10 different regions.
+
+According to time, the three `Table A-1` have name data_15_16, data_17_18 and data_19_20 in this report. `Table A-2` and `Table A-7` are called house_67_20 and fm_ern respectively. The `Shape of Employment in Nonagricultural for Female` can easily separate the data to three different sheets, the split method will show after. All of them are informational and support our project; however, the majority of data sets are not readable for programming. Our first step in this project is to transform and clean these data.
+

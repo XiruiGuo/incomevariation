@@ -1,10 +1,15 @@
 # Missing values
 
-graph 1
 ```{r}
 library(readxl)
-library(mi)
+library(ggplot2)
+library(tibble)
+library(tidyverse)
+library(magrittr)
+```
 
+
+```{r}
 fm_ern_new <- read.csv("./data_train/fm_ern_new.csv")
 tidyfm <- fm_ern_new %>% 
     gather(key, value, -Year) %>% 
@@ -13,12 +18,14 @@ tidyfm <- fm_ern_new %>%
 ggplot(tidyfm, aes(x = Year, y =key , fill = missing)) +
   geom_tile(color = "white") + 
   ggtitle("Missing value in fm_ern_new") +
-  scale_fill_viridis_d() + # discrete scale
+  scale_fill_viridis_d() + 
   theme_bw()
 ```
 
-We can observe several missing data in the dataset "fm_ern_new", but the good point is the majority of the missing value is gather in the 1960-1966. We will deal with these missing values during 1960-1966 in the analysis because there're 5 columns contain completely data and we may use them.
-For the other two missing data in the "ft_workers_num_male" and "ft_workers_num_male", we fill them by using the mean about the above year and below year.
+After inspecting all transformed data sets, it is good to see only  fm_ern has missing values and the number of missing data isn't large. Also, the majority of missing values gather in the period of 1960-1966, which is less important in this data set. Though some values are missing in 1960-1966, there are still 5 column containing complete data can be still used to study the median earning of different genders. So, the report don't dispose the missing value in 1960-1966 in this part.
+
+In year 1974, there are two missing values in the "ft_workers_num_male" and "ft_workers_num_male" . From observing the data, the similar year has similar value, thus the report fills these two value by using the mean of the worker number from previous and next year. 
+
 
 ```{r}
 miss_y<-tidyfm[(tidyfm$missing=="yes" & tidyfm$key=="ft_workers_num_male"),]$Year[1]
