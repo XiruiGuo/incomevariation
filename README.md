@@ -1,13 +1,12 @@
-My awesome book
 
-income variation project 
-The first point we focus on is disparities in income by Race and Ethnicity, and how does location affect income?
-The second question we can observe from our data is trends in the income distribution by race/ethnicity over a period of time?
-Another noteworthy point is explaining trend in gender wage gap
+Income variation project 
+
+For comparison of the income, the report uses the median of income instead of the mean because Pareto principle, income has right-skewness distribution. Median can reduce the effects of outliers. The report discusses the factors which can influence the income and they are:
+1. Region\
+2. Race\
+3. Household, Education and Age
 
 
-
-*This repo was initially generated from a bookdown template available here: https://github.com/jtr13/EDAVtemplate.*	
 
 
 

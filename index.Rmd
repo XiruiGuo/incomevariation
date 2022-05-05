@@ -7,3 +7,6 @@ site: bookdown::bookdown_site
 
 # Introduction
 
+The topic of this project focuses on the factors that affect income inequality, with substantial overall growth in people’s income, the income gap has also been widening, and there are diverse reasons for this outcome. Meanwhile, the excessive income disparity has also led to a series of consequences, posing serious challenges for future socioeconomic development. Inclusive economic growth is not only a value orientation of social justice but also a necessity for sustainable economic growth and social stability. Most people would agree with reducing the income disparity gap, so it is worthy to understand what is causing the income disparity gap between rich and poor in order to reduce it. 
+
+In this analysis, we focus on cross-sectional comparisons of median income with genders over time, and longitudinal comparisons of key factors (e.g. race, region, household type, education, age) with income over the same time period. This statistical graphical analysis can help us answer the question of the growing gap between men's and women’s income inequality, the influence of race and ethnicity on income, income variation of different households and etc. 
