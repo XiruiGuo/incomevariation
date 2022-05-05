@@ -1,7 +1,14 @@
 introduction
 data-sources
 data-transformation
+the-transformation-process-for-fm_ern
+the-transformation-process-for-house_67_20
+the-transformation-process-for-data_15_16-data_17_18-and-data_19_20
+the-transformation-process-for-shape-of-employment-in-nonagricultural-for-female
 missing-values
 results
+gender-influence-in-income
+race-influence-in-income
+other-influence-in-income
 interactive-component
 conclusion
